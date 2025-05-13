@@ -1,0 +1,40 @@
+{
+  "name": "mustafaamaklad/laravel-fcm",
+  "description": "A Laravel package for sending Firebase Cloud Messaging notifications",
+  "type": "library",
+  "license": "MIT",
+  "require": {
+    "php": "^8.2",
+    "illuminate/support": "^9.0|^10.0|^11.0",
+    "illuminate/notifications": "^9.0|^10.0|^11.0",
+    "illuminate/database": "^9.0|^10.0|^11.0",
+    "guzzlehttp/guzzle": "^7.0"
+  },
+  "require-dev": {
+    "orchestra/testbench": "^7.0|^8.0|^9.0",
+    "phpunit/phpunit": "^9.5|^10.0",
+    "mockery/mockery": "^1.5"
+  },
+  "autoload": {
+    "psr-4": {
+      "MustafaAMaklad\\Fcm\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "MustafaAMaklad\\Fcm\\Tests\\": "tests/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "MustafaAMaklad\\Fcm\\FcmServiceProvider"
+      ]
+    }
+  },
+  "scripts": {
+    "test": "phpunit"
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
+}

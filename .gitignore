@@ -1,0 +1,64 @@
+# Vendor dependencies (handled by Composer)
+vendor/
+
+# Node modules (if using frontend assets in the package)
+node_modules/
+
+# Laravel specific files (only if your package has tests or demo app)
+.env
+.env.*
+.phpunit.result.cache
+
+# IDEs and Editors
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Composer files (lock file might be ignored in packages)
+composer.lock
+
+# NPM/Yarn lock files (optional for packages)
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Coverage reports
+coverage/
+clover.xml
+phpunit.xml
+
+# Cache & logs (if your package has cacheable operations or local logs)
+storage/
+*.log
+
+# User-specific local files
+*.bak
+*.tmp
+*.orig
+
+# PHPUnit Cache
+.phpunit.result.cache
+
+# Laravel Telescope (if package uses Telescope for debugging)
+storage/telescope/
+
+# Static analysis tools
+.php-cs-fixer.cache
+psalm.xml
+phpstan.neon
+phpstan.neon.dist
+phpstan-result-cache.php
+
+# Nix files (if used)
+result
+.cache/
+
+# IDE helper files (if using barryvdh/laravel-ide-helper)
+_ide_helper.php
+_ide_helper_models.php
+.phpstorm.meta.php

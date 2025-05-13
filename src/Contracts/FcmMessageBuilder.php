@@ -1,0 +1,16 @@
+<?php
+
+namespace Src\Contracts;
+
+interface FcmMessageBuilder
+{
+    public function token(string $token): self;
+    public function title(string $title): self;
+    public function body(string $body): self;
+    public function data(array $data): self;
+    public function badge(int $count): self;
+    public function sound(string $sound = 'default', bool $enabled = true): self;
+    public function apns(array $config = []): self;
+    public function android(array $config = []): self;
+    public function build(bool $decoded = true): array|string;
+}
