@@ -1,14 +1,15 @@
 <?php
 
-namespace Src\Services;
+namespace MustafaAMaklad\Fcm\Services;
 
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Src\Contracts\ScopeAuthenticator;
-use Src\Contracts\FcmMessageBuilder;
-use Src\Exceptions\FcmSendingException;
+use MustafaAMaklad\Fcm\Contracts\ScopeAuthenticator;
+use MustafaAMaklad\Fcm\Contracts\FcmMessageBuilder;
+use MustafaAMaklad\Fcm\Contracts\FcmServiceClient;
+use MustafaAMaklad\Fcm\Exceptions\FcmSendingException;
 
-class FcmService
+class FcmService implements FcmServiceClient
 {
     public function __construct(protected ScopeAuthenticator $scopeAuthenticator)
     {

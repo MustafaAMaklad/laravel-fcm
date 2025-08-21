@@ -1,9 +1,9 @@
 <?php
 
-namespace Src\Facades;
+namespace MustafaAMaklad\Fcm\Facades;
 
 use Illuminate\Support\Facades\Facade;
-use Src\Services\FcmService;
+use MustafaAMaklad\Fcm\Services\FcmService;
 
 class Fcm extends Facade
 {

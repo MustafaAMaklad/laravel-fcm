@@ -1,12 +1,12 @@
 <?php
 
-namespace Src\Services;
+namespace MustafaAMaklad\Fcm\Services;
 
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Src\Contracts\ScopeAuthenticator;
-use Src\Exceptions\FirebaseAuthorizationException;
+use MustafaAMaklad\Fcm\Contracts\ScopeAuthenticator;
+use MustafaAMaklad\Fcm\Exceptions\FirebaseAuthorizationException;
 
 class FirebaseAuthenticator implements ScopeAuthenticator
 {

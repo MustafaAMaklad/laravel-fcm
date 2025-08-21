@@ -1,6 +1,6 @@
 <?php
 
-namespace Src\Models;
+namespace MustafaAMaklad\Fcm\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;

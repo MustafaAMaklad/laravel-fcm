@@ -1,8 +1,8 @@
 <?php
 
-namespace Src\Services;
+namespace MustafaAMaklad\Fcm\Services;
 
-use Src\Contracts\FcmMessageBuilder;
+use MustafaAMaklad\Fcm\Contracts\FcmMessageBuilder;
 
 class FcmMessage implements FcmMessageBuilder
 {

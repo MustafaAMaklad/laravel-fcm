@@ -1,15 +1,15 @@
 <?php
 
-namespace Src\Providers;
+namespace MustafaAMaklad\Fcm\Providers;
 
-use App\Factories\FirebaseAuthenticatorFactory;
-use App\Notifications\FcmChannel;
+use MustafaAMaklad\Fcm\Factories\FirebaseAuthenticatorFactory;
+use MustafaAMaklad\Fcm\Channels\FcmChannel;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\ServiceProvider;
-use Src\Contracts\FcmServiceClient;
-use Src\Contracts\ScopeAuthenticator;
-use Src\Services\FcmService;
+use MustafaAMaklad\Fcm\Contracts\FcmServiceClient;
+use MustafaAMaklad\Fcm\Contracts\ScopeAuthenticator;
+use MustafaAMaklad\Fcm\Services\FcmService;
 
 class FcmServiceProvider extends ServiceProvider
 {
@@ -18,6 +18,10 @@ class FcmServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->mergeConfigFrom(
+            __DIR__ . '/../../config/firebase.php',
+            'firebase'
+        );
         $this->app->bind(FirebaseAuthenticatorFactory::class);
         $this->app->singleton(ScopeAuthenticator::class, fn(Application $app): ScopeAuthenticator => $app->make(FirebaseAuthenticatorFactory::class)->create());
         $this->app->bind(FcmServiceClient::class, FcmService::class);

@@ -1,9 +1,9 @@
 <?php
 
-namespace Src\Traits;
+namespace MustafaAMaklad\Fcm\Traits;
 
 use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Src\Models\FcmToken;
+use MustafaAMaklad\Fcm\Models\FcmToken;
 
 trait FcmNotifiable
 {

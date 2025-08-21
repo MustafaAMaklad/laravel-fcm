@@ -1,6 +1,6 @@
 <?php
 
-namespace Src\Contracts;
+namespace MustafaAMaklad\Fcm\Contracts;
 
 interface ScopeAuthenticator
 {

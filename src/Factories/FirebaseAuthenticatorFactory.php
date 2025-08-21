@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Factories;
+namespace MustafaAMaklad\Fcm\Factories;
 
-use Src\Contracts\ScopeAuthenticator;
-use Src\Services\FirebaseAuthenticator;
+use MustafaAMaklad\Fcm\Contracts\ScopeAuthenticator;
+use MustafaAMaklad\Fcm\Services\FirebaseAuthenticator;
 
 class FirebaseAuthenticatorFactory
 {

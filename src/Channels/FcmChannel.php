@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Notifications;
+namespace MustafaAMaklad\Fcm\Channels;
 
 use Illuminate\Notifications\Notification;
-use Src\Contracts\FcmServiceClient;
+use MustafaAMaklad\Fcm\Contracts\FcmServiceClient;
 
 class FcmChannel
 {
@@ -16,7 +16,7 @@ class FcmChannel
      */
     public function send(object $notifiable, Notification $notification): void
     {
-        /** @var \Src\Contracts\FcmNotification $notification */
+        /** @var \MustafaAMaklad\Fcm\Contracts\FcmNotification $notification */
 
         $message = $notification->toFcm($notifiable);
 
