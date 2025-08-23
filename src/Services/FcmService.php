@@ -19,7 +19,7 @@ class FcmService implements FcmServiceClient
     {
         $response = Http::withHeader('Authorization', $this->scopeAuthenticator->getAccessToken(config('firebase.scopes.fcm')))
             ->asJson()
-            ->post(config('firebase.messages.send'), $message->build());
+            ->post(config('firebase.messages.send'), $message->toArray());
 
         if ($response->failed()) {
             Log::error('FCM message failed', $response->json());
