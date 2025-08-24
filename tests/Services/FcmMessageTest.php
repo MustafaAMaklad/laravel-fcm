@@ -28,20 +28,19 @@ class FcmMessageTest extends TestCase
     }
 
     /** @test */
-    public function it_builds_a_message(): void
+    public function it_builds_sync_message(): void
     {
         $message = new FcmMessage();
 
         $built = $message
+            ->sync()
+            ->token('token')
             ->title('Hello')
             ->body('World')
-            ->token('token')
+            ->type('type')
             ->id('id')
-            ->data(['type' => 'type'])
             ->badge(1)
             ->sound('sound')
-            ->apns()
-            ->android()
             ->toArray();
 
         $expected = [
@@ -51,7 +50,11 @@ class FcmMessageTest extends TestCase
                     'title' => 'Hello',
                     'body' => 'World',
                     'type' => 'type',
-                    'id' => 'id'
+                    'id' => 'id',
+                    'notification_config' => [
+                        'sound' => 'sound',
+                        'badge' => 1
+                    ],
                 ],
                 'apns' => [
                     'payload' => [
@@ -60,20 +63,13 @@ class FcmMessageTest extends TestCase
                                 'title' => 'Hello',
                                 'body' => 'World'
                             ],
-                            'badge' => 1,
                             'sound' => 'sound',
-                            'content-available' => 1
+                            'badge' => 1,
                         ],
                         'type' => 'type',
                         'id' => 'id',
                     ],
-                    'headers' => [
-                        'apns-priority' => '10'
-                    ],
                 ],
-                'android' => [
-                    'priority' => 'high'
-                ]
             ]
         ];
 

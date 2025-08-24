@@ -13,5 +13,9 @@ return [
     ],
     'messages' => [
         'send' => 'https://fcm.googleapis.com/v1/projects/' . env('FIREBASE_PROJECT_ID') .'/messages:send',
+    ],
+
+    'fcm' => [
+        'custom_android_key_name' => 'notification_config',
     ]
 ]; 

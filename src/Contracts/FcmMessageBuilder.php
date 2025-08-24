@@ -12,6 +12,7 @@ interface FcmMessageBuilder
     public function sound(string $sound = 'default'): self;
     public function apns(array $config = []): self;
     public function android(array $config = []): self;
+    public function sync(bool $sync = true): self;
     public function toArray(): array;
     public function toJson(): string;
 }
