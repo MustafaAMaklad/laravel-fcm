@@ -3,17 +3,18 @@
 namespace MustafaAMaklad\Fcm\Services;
 
 use MustafaAMaklad\Fcm\Contracts\FcmMessageBuilder;
+use MustafaAMaklad\Fcm\Traits\ShouldSync;
+use MustafaAMaklad\Fcm\Traits\SupportsAndroidConfigs;
 
 class FcmMessage implements FcmMessageBuilder
 {
-    public const ANDROID_PRIORITY_HIGH = 'high';
-    public const APNS_PRIORITY_IMMEDIATE = '10';
-    public const APNS_CONTENT_AVAILABLE = 1;
-    public const APNS_BADGE = 1;
-    public const APNS_SOUND_DEFAULT = 'default';
+    use ShouldSync, SupportsAndroidConfigs;
 
-    protected string $androidCustomKey = '';
-    protected bool $sync = true;
+    // public const ANDROID_PRIORITY_HIGH = 'high';
+    // public const APNS_PRIORITY_IMMEDIATE = '10';
+    // public const APNS_CONTENT_AVAILABLE = 1;
+    // public const APNS_BADGE = 1;
+    // public const APNS_SOUND_DEFAULT = 'default';
 
     protected array $message = [
         'message' => [
@@ -26,19 +27,12 @@ class FcmMessage implements FcmMessageBuilder
 
     public function __construct()
     {
-        $this->androidCustomKey = config('firebase.fcm.custom_android_key_name', 'notification_config');
-    }
-
-    public function sync(bool $sync = true): FcmMessageBuilder
-    {
-        $this->sync = $sync;
-
-        return $this;
+        // $this->androidCustomKey = config('firebase.fcm.custom_android_key_name', 'notification_config');
     }
 
     public function token(string $token): FcmMessageBuilder
     {
-        $this->message['message']['token'] = $token;
+        $this->message = $this->put($this->message, ['message', 'token'], $token);
 
         return $this;
     }
@@ -47,7 +41,7 @@ class FcmMessage implements FcmMessageBuilder
     {
         $this->message = $this->put($this->message, ['message', 'data', 'title'], $title);
 
-        if ($this->sync) {
+        if ($this->shouldSync()) {
             $this->message = $this->put($this->message, ['message', 'apns', 'payload', 'aps', 'alert', 'title'], $title);
         }
 
@@ -58,7 +52,7 @@ class FcmMessage implements FcmMessageBuilder
     {
         $this->message = $this->put($this->message, ['message', 'data', 'body'], $body);
 
-        if ($this->sync) {
+        if ($this->shouldSync()) {
             $this->message = $this->put($this->message, ['message', 'apns', 'payload', 'aps', 'alert', 'body'], $body);
         }
 
@@ -67,10 +61,10 @@ class FcmMessage implements FcmMessageBuilder
 
     public function type(string $type): FcmMessageBuilder
     {
-        $this->message['message']['data']['type'] = $type;
+        $this->message = $this->put($this->message, ['message', 'data', 'type'], $type);
 
-        if ($this->sync) {
-            $this->message['message']['apns']['payload']['type'] = $type;
+        if ($this->shouldSync()) {
+            $this->message = $this->put($this->message, ['message', 'apns', 'payload', 'type'], $type);
         }
 
         return $this;
@@ -78,10 +72,18 @@ class FcmMessage implements FcmMessageBuilder
 
     public function id(string $id): FcmMessageBuilder
     {
-        $this->message['message']['data']['id'] = $id;
+        $this->message = $this->put(
+            $this->message,
+            ['message', 'data', 'id'],
+            $id
+        );
 
-        if ($this->sync) {
-            $this->message['message']['apns']['payload']['id'] = $id;
+        if ($this->shouldSync()) {
+            $this->message = $this->put(
+                $this->message,
+                ['message', 'apns', 'payload', 'id'],
+                $id
+            );
         }
 
         return $this;
@@ -119,33 +121,33 @@ class FcmMessage implements FcmMessageBuilder
         return $this;
     }
 
-    public function apns(array $config = []): FcmMessageBuilder
-    {
-        if ($config === []) {
-            $this->setDefaultApnsConfig();
-        } else {
-            $this->message['message']['apns'] = array_replace_recursive(
-                $this->message['message']['apns'],
-                $config
-            );
-        }
+    // public function apns(array $config = []): FcmMessageBuilder
+    // {
+    //     if ($config === []) {
+    //         $this->setDefaultApnsConfig();
+    //     } else {
+    //         $this->message['message']['apns'] = array_replace_recursive(
+    //             $this->message['message']['apns'],
+    //             $config
+    //         );
+    //     }
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
-    public function android(array $config = []): FcmMessageBuilder
-    {
-        if ($config === []) {
-            $this->setDefaultAndroidConfig();
-        } else {
-            $this->message['message']['android'] = array_replace_recursive(
-                $this->message['message']['android'],
-                $config
-            );
-        }
+    // public function android(array $config = []): FcmMessageBuilder
+    // {
+    //     if ($config === []) {
+    //         $this->setDefaultAndroidConfig();
+    //     } else {
+    //         $this->message['message']['android'] = array_replace_recursive(
+    //             $this->message['message']['android'],
+    //             $config
+    //         );
+    //     }
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
     public function toArray(): array
     {
@@ -157,73 +159,73 @@ class FcmMessage implements FcmMessageBuilder
         return json_encode($this->message);
     }
 
-    protected function setDefaultApnsConfig(): void
-    {
-        $this->message['message']['apns']['payload']['type'] = $this->message['message']['data']['type'];
-        $this->message['message']['apns']['payload']['id'] = $this->message['message']['data']['id'];
-        $this->message['message']['apns']['payload']['aps']['alert']['title'] = $this->message['message']['data']['title'];
-        $this->message['message']['apns']['payload']['aps']['alert']['body'] = $this->message['message']['data']['body'];
-        $this->message['message']['apns']['payload']['aps']['sound'] = $this->message['message']['data'][$this->androidCustomKey]['sound'] ?? self::APNS_SOUND_DEFAULT;
-        $this->message['message']['apns']['payload']['aps']['badge'] = $this->message['message']['data'][$this->androidCustomKey]['badge'] ?? self::APNS_BADGE;
-        $this->message['message']['apns']['priority'] = self::APNS_PRIORITY_IMMEDIATE;
-    }
+    // protected function setDefaultApnsConfig(): void
+    // {
+    //     $this->message['message']['apns']['payload']['type'] = $this->message['message']['data']['type'];
+    //     $this->message['message']['apns']['payload']['id'] = $this->message['message']['data']['id'];
+    //     $this->message['message']['apns']['payload']['aps']['alert']['title'] = $this->message['message']['data']['title'];
+    //     $this->message['message']['apns']['payload']['aps']['alert']['body'] = $this->message['message']['data']['body'];
+    //     $this->message['message']['apns']['payload']['aps']['sound'] = $this->message['message']['data'][$this->androidCustomKey]['sound'] ?? self::APNS_SOUND_DEFAULT;
+    //     $this->message['message']['apns']['payload']['aps']['badge'] = $this->message['message']['data'][$this->androidCustomKey]['badge'] ?? self::APNS_BADGE;
+    //     $this->message['message']['apns']['priority'] = self::APNS_PRIORITY_IMMEDIATE;
+    // }
 
-    protected function setDefaultAndroidConfig(): void
-    {
-        $this->message['message']['android']['priority'] = self::ANDROID_PRIORITY_HIGH;
-    }
+    // protected function setDefaultAndroidConfig(): void
+    // {
+    //     $this->message['message']['android']['priority'] = self::ANDROID_PRIORITY_HIGH;
+    // }
 
-    protected function validate(): void
-    {
-        if (!isset($this->message['message']['token']) || $this->message['message']['token'] === '') {
-            throw new \InvalidArgumentException('A token is required.');
-        }
+    // protected function validate(): void
+    // {
+    //     if (!isset($this->message['message']['token']) || $this->message['message']['token'] === '') {
+    //         throw new \InvalidArgumentException('A token is required.');
+    //     }
 
-        $this->validateData();
-        $this->validateApns();
-    }
+    //     $this->validateData();
+    //     $this->validateApns();
+    // }
 
-    protected function validateData(): void
-    {
-        if (!isset($this->message['message']['data']) || $this->message['message']['data'] === '') {
-            throw new \InvalidArgumentException('A data is required.');
-        }
+    // protected function validateData(): void
+    // {
+    //     if (!isset($this->message['message']['data']) || $this->message['message']['data'] === '') {
+    //         throw new \InvalidArgumentException('A data is required.');
+    //     }
 
-        if (!isset($this->message['message']['data']['title']) || $this->message['message']['data']['title'] === '') {
-            throw new \InvalidArgumentException('A title is required.');
-        }
+    //     if (!isset($this->message['message']['data']['title']) || $this->message['message']['data']['title'] === '') {
+    //         throw new \InvalidArgumentException('A title is required.');
+    //     }
 
-        if (!isset($this->message['message']['data']['body']) || $this->message['message']['data']['body'] === '') {
-            throw new \InvalidArgumentException('A body is required.');
-        }
-    }
+    //     if (!isset($this->message['message']['data']['body']) || $this->message['message']['data']['body'] === '') {
+    //         throw new \InvalidArgumentException('A body is required.');
+    //     }
+    // }
 
-    protected function validateApns(): void
-    {
-        if (!isset($this->message['message']['apns']) || $this->message['message']['apns'] === []) {
-            throw new \InvalidArgumentException('An apns is required.');
-        }
+    // protected function validateApns(): void
+    // {
+    //     if (!isset($this->message['message']['apns']) || $this->message['message']['apns'] === []) {
+    //         throw new \InvalidArgumentException('An apns is required.');
+    //     }
 
-        if (!isset($this->message['message']['apns']['payload']) || $this->message['message']['apns']['payload'] === []) {
-            throw new \InvalidArgumentException('An apns payload is required.');
-        }
+    //     if (!isset($this->message['message']['apns']['payload']) || $this->message['message']['apns']['payload'] === []) {
+    //         throw new \InvalidArgumentException('An apns payload is required.');
+    //     }
 
-        if (!isset($this->message['message']['apns']['payload']['aps']) || $this->message['message']['apns']['payload']['aps'] === []) {
-            throw new \InvalidArgumentException('An apns payload aps is required.');
-        }
+    //     if (!isset($this->message['message']['apns']['payload']['aps']) || $this->message['message']['apns']['payload']['aps'] === []) {
+    //         throw new \InvalidArgumentException('An apns payload aps is required.');
+    //     }
 
-        if (!isset($this->message['message']['apns']['payload']['aps']['alert']) || $this->message['message']['apns']['payload']['aps']['alert'] === []) {
-            throw new \InvalidArgumentException('An apns payload aps alert is required.');
-        }
+    //     if (!isset($this->message['message']['apns']['payload']['aps']['alert']) || $this->message['message']['apns']['payload']['aps']['alert'] === []) {
+    //         throw new \InvalidArgumentException('An apns payload aps alert is required.');
+    //     }
 
-        if (!isset($this->message['message']['apns']['payload']['aps']['alert']['title']) || $this->message['message']['apns']['payload']['aps']['alert']['title'] === '') {
-            throw new \InvalidArgumentException('An apns payload aps alert title is required.');
-        }
+    //     if (!isset($this->message['message']['apns']['payload']['aps']['alert']['title']) || $this->message['message']['apns']['payload']['aps']['alert']['title'] === '') {
+    //         throw new \InvalidArgumentException('An apns payload aps alert title is required.');
+    //     }
 
-        if (!isset($this->message['message']['apns']['payload']['aps']['alert']['body']) || $this->message['message']['apns']['payload']['aps']['alert']['body'] === '') {
-            throw new \InvalidArgumentException('An apns payload aps alert body is required.');
-        }
-    }
+    //     if (!isset($this->message['message']['apns']['payload']['aps']['alert']['body']) || $this->message['message']['apns']['payload']['aps']['alert']['body'] === '') {
+    //         throw new \InvalidArgumentException('An apns payload aps alert body is required.');
+    //     }
+    // }
 
     public function put(array $root, array $path, mixed $value): array
     {
